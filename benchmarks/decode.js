@@ -15,7 +15,7 @@ suite
   msgpackJs.decode(js);
 })
 .addFunction('msgpack-lite', function (m, js, node, json) {
-  msgpackLite.decode(m);
+  msgpackLite.decode(node);
 })
 // Note: JSON encodes buffers as arrays
 .addFunction('JSON.parse (from Buffer)', function (m, js, node, json) {
