@@ -17,7 +17,7 @@ suite
   msgpackJs.decode(js);
 })
 .addFunction('msgpack-lite', function (m, js, node, json) {
-  msgpackLite.decode(m);
+  msgpackLite.decode(node);
 })
 .addFunction('@msgpack/msgpack', function (m, js, node, json) {
   msgpack.decode(m);
