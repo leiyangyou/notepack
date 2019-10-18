@@ -1,5 +1,6 @@
 {
   "maxerr"        : 50,
+  "esversion"     : 7,
 
   "bitwise"       : false,
   "camelcase"     : true,
@@ -30,7 +31,6 @@
   "debug"         : false,
   "eqnull"        : false,
   "es5"           : false,
-  "esnext"        : true,
   "moz"           : false,
   "evil"          : false,
   "expr"          : false,
@@ -67,6 +67,7 @@
 
 
   "globals"       : {
-    "expect": true
+    "expect": true,
+    "BigInt": true
   }
 }

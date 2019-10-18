@@ -292,17 +292,6 @@ describe('notepack', function () {
     expect(notepack.encode(obj)).to.deep.equal(notepack.encode('c'));
   });
 
-  it('toJSON for BigInt', function () {
-    BigInt.prototype.toJSON = function () {
-      return String(this);
-    };
-    try {
-      checkEncode(BigInt(1234), 'a431323334');
-    } finally {
-      delete BigInt.prototype.toJSON;
-    }
-  });
-
   it('all formats', function () {
     this.timeout(20000);
     const expected = {
@@ -342,5 +331,15 @@ describe('notepack', function () {
     const fixture = require('./fixtures/10000.json');
 
     expect(notepack.decode(notepack.encode(fixture))).to.deep.equal(fixture);
+  });
+  
+  it('BigInt', function () {
+    [
+      BigInt(2) ** BigInt(63) - BigInt(1),
+      BigInt(0),
+      BigInt(-2) ** BigInt(63) + BigInt(1),
+    ].forEach((value)=>{
+      expect(notepack.decode(notepack.encode(value)).toString()).to.equal(value.toString());
+    });
   });
 });
