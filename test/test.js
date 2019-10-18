@@ -313,4 +313,14 @@ describe('notepack', function () {
 
     expect(notepack.decode(notepack.encode(fixture))).to.deep.equal(fixture);
   });
+  
+  it('BigInt', function () {
+    [
+      BigInt(2) ** BigInt(63) - BigInt(1),
+      BigInt(0),
+      BigInt(-2) ** BigInt(63) + BigInt(1),
+    ].forEach((value)=>{
+      expect(notepack.decode(notepack.encode(value)).toString()).to.equal(value.toString());
+    });
+  });
 });
