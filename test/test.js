@@ -1,5 +1,7 @@
 'use strict';
 
+/* global BigInt */
+
 const notepack = require('../');
 const expect = require('chai').expect;
 
@@ -285,6 +287,17 @@ describe('notepack', function () {
       }
     };
     expect(notepack.encode(obj)).to.deep.equal(notepack.encode('c'));
+  });
+
+  it('toJSON for BigInt', function () {
+    BigInt.prototype.toJSON = function () {
+      return String(this);
+    };
+    try {
+      checkEncode(BigInt(1234), 'a431323334');
+    } finally {
+      delete BigInt.prototype.toJSON;
+    }
   });
 
   it('all formats', function () {

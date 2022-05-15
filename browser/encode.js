@@ -259,6 +259,10 @@ function _encode(bytes, defers, value) {
     bytes.push(0xd4, 0, 0);
     return 3;
   }
+  // custom types like BigInt (typeof value === 'bigint')
+  if (typeof value.toJSON === 'function') {
+    return _encode(bytes, defers, value.toJSON());
+  }
   throw new Error('Could not encode');
 }
 

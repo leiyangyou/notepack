@@ -38,6 +38,55 @@ A browser version of notepack is also available (2.0 kB minified/gzipped)
 </script>
 ```
 
+## Common questions
+
+### How to encode custom types?
+
+This library does not currently support [extension types](https://github.com/msgpack/msgpack/blob/master/spec.md#extension-types). That being said, you can create a `toJSON()` method on your object, which will be used when encoding:
+
+```js
+class MyClass {
+  toJSON() {
+    return 42;
+  }
+}
+```
+
+### How to handle BigInt values?
+
+You can use the `toJSON()` method:
+
+```js
+// always as string
+BigInt.prototype.toJSON = function () {
+  return String(this);
+};
+
+// or either as string or number, depending on the value
+BigInt.prototype.toJSON = function () {
+  var isSafeNumber = Number.MIN_SAFE_INTEGER <= this && this <= Number.MAX_SAFE_INTEGER;
+  return isSafeNumber ? Number(this) : String(this);
+};
+```
+
+### Handle to handle ES6 Set and Map values?
+
+Again, `toJSON()` to the rescue:
+
+```js
+// convert the set to an array
+// example: Set(3) { 1, 2, 3 } into [ 1, 2, 3 ]
+Set.prototype.toJSON = function () {
+  return [...this];
+}
+
+// convert the map to an array of array
+// example: Map(2) { 1 => '2', '3' => 4 } into [ [ 1, '2' ], [ '3', 4 ] ]
+Map.prototype.toJSON = function () {
+  return [...this];
+}
+```
+
 ## Performance
 
 Performance is currently comparable to msgpack-node (which presumably needs optimizing and suffers from JS-native overhead) and is significantly faster than other implementations. Several micro-optimizations are used to improve the performance of short string and Buffer operations.
