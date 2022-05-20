@@ -1,7 +1,6 @@
 # notepack
 
-[![Build Status](https://travis-ci.org/darrachequesne/notepack.svg?branch=master)](https://travis-ci.org/darrachequesne/notepack)
-[![Coverage Status](https://coveralls.io/repos/github/darrachequesne/notepack/badge.svg?branch=master)](https://coveralls.io/github/darrachequesne/notepack?branch=master)
+[![Build Status](https://github.com/darrachequesne/notepack/workflows/CI/badge.svg?branch=main)](https://github.com/darrachequesne/notepack/actions)
 
 A fast [Node.js](http://nodejs.org) implementation of the latest [MessagePack](http://msgpack.org) [spec](https://github.com/msgpack/msgpack/blob/master/spec.md).
 
@@ -21,10 +20,10 @@ npm install notepack.io
 ## Usage
 
 ```js
-var notepack = require('notepack.io');
+const notepack = require('notepack.io');
 
-var encoded = notepack.encode({ foo: 'bar'}); // <Buffer 81 a3 66 6f 6f a3 62 61 72>
-var decoded = notepack.decode(encoded); // { foo: 'bar' }
+const encoded = notepack.encode({ foo: 'bar'}); // <Buffer 81 a3 66 6f 6f a3 62 61 72>
+const decoded = notepack.decode(encoded); // { foo: 'bar' }
 ```
 
 ## Browser
