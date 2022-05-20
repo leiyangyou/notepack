@@ -38,5 +38,9 @@
   "browser": {
     "./lib/encode.js": "./browser/encode.js",
     "./lib/decode.js": "./browser/decode.js"
-  }
+  },
+  "keywords": [
+    "msgpack",
+    "MessagePack"
+  ]
 }
