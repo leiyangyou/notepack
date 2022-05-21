@@ -73,7 +73,7 @@ describe('notepack (browser build)', function() {
       map: {},
       nil: null,
       bool: { 'true': true, 'false': false, both: [true, false, false, false, true] },
-      fixext: [undefined, new Date('2140-01-01T13:14:15.678Z'), undefined, new Date('2005-12-31T23:59:59.999Z')],
+      fixext: [null, new Date('2140-01-01T13:14:15.678Z'), null, new Date('2005-12-31T23:59:59.999Z')],
       utf8: ['α', '亜', '\uD83D\uDC26'],
       float: [1.1, 1234567891234567.5, Infinity, -Infinity, NaN]
     };

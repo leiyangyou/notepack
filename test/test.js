@@ -71,6 +71,7 @@ describe('notepack', function () {
 
   it('nil', function () {
     check(null, 'c0');
+    checkEncode(undefined, 'c0');
   });
 
   it('false', function () {
@@ -208,8 +209,7 @@ describe('notepack', function () {
     check(-Math.pow(2, 63) - 1024, 'd38000000000000000');
   });
 
-  it('fixext 1 / undefined', function () {
-    check(undefined, 'd40000');
+  it('fixext 1', function () {
     checkDecode([127, Buffer.from('a')], 'd4' + '7f' + '61');
   });
 
@@ -311,7 +311,7 @@ describe('notepack', function () {
       map: {},
       nil: null,
       bool: { 'true': true, 'false': false, both: [true, false, false, false, true] },
-      fixext: [undefined, new Date('2140-01-01T13:14:15.678Z'), undefined, new Date('2005-12-31T23:59:59.999Z')]
+      fixext: [null, new Date('2140-01-01T13:14:15.678Z'), null, new Date('2005-12-31T23:59:59.999Z')]
     };
     expected.map['a'.repeat(32)] = { a: 'a', b: 'b', c: 'c' };
     expected.map['b'.repeat(256)] = { a: { b: 1, c: 1, d: 1, e: { f: { g: 2, h: 2 } } } };
@@ -320,6 +320,19 @@ describe('notepack', function () {
     expected.map32 = map(65536);
 
     expect(notepack.decode(notepack.encode(expected))).to.deep.equal(expected);
+  });
+
+  it('undefined as array elem or map value', function () {
+    const value = {
+      a: undefined,
+      b: null,
+      c: [undefined, null]
+    };
+    const expected = {
+      b: null,
+      c: [null, null]
+    };
+    expect(notepack.decode(notepack.encode(value))).to.deep.equal(expected);
   });
 
   it('10000', function () {

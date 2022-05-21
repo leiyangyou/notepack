@@ -218,7 +218,7 @@ function _encode(bytes, defers, value) {
     var allKeys = Object.keys(value);
     for (i = 0, l = allKeys.length; i < l; i++) {
       key = allKeys[i];
-      if (typeof value[key] !== 'function') {
+      if (value[key] !== undefined && typeof value[key] !== 'function') {
         keys.push(key);
       }
     }
@@ -254,10 +254,9 @@ function _encode(bytes, defers, value) {
     bytes.push(value ? 0xc3 : 0xc2);
     return 1;
   }
-  // fixext 1 / undefined
   if (type === 'undefined') {
-    bytes.push(0xd4, 0, 0);
-    return 3;
+    bytes.push(0xc0);
+    return 1;
   }
   // custom types like BigInt (typeof value === 'bigint')
   if (typeof value.toJSON === 'function') {
