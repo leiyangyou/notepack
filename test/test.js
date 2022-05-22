@@ -221,18 +221,21 @@ describe('notepack', function () {
     checkDecode([127, Buffer.from('abcd')], 'd6' + '7f' + '61626364');
   });
 
-  it('fixext 8 / Date', function () {
-    check(new Date(0), 'd7000000000000000000');
-    check(new Date('1956-06-17T00:00:00.000Z'), 'd700ffffff9c80e28800');
-    check(new Date('1970-01-01T00:00:00.000Z'), 'd7000000000000000000');
-    check(new Date('2000-06-13T00:00:00.000Z'), 'd700000000dfb7629c00');
-    check(new Date('2005-12-31T23:59:59.999Z'), 'd7000000010883436bff');
-    check(new Date('2140-01-01T13:14:15.678Z'), 'd700000004e111a31efe');
+  it('fixext 8', function () {
     checkDecode([127, Buffer.from('abcd'.repeat(2))], 'd7' + '7f' + '61626364'.repeat(2));
   });
 
   it('fixext 16', function () {
     checkDecode([-128, Buffer.from('abcd'.repeat(4))], 'd8' + '80' + '61626364'.repeat(4));
+  });
+
+  it('timestamp ext', function () {
+    check(new Date(0), 'd6ff00000000');
+    check(new Date('1956-06-17T00:00:00.000Z'), 'c70cff00000000ffffffffe6876500');
+    check(new Date('1970-01-01T00:00:00.000Z'), 'd6ff00000000');
+    check(new Date('2000-06-13T00:00:00.000Z'), 'd6ff39457980');
+    check(new Date('2005-12-31T23:59:59.999Z'), 'd7ffee2e1f0043b71b7f');
+    check(new Date('2140-01-01T13:14:15.678Z'), 'd7ffa1a5d6013fc2faa7');
   });
 
   it('str 8', function () {

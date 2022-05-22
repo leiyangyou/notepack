@@ -1,5 +1,8 @@
 'use strict';
 
+var TIMESTAMP32_MAX_SEC = 0x100000000 - 1; // 32-bit unsigned int
+var TIMESTAMP64_MAX_SEC = 0x400000000 - 1; // 34-bit unsigned int
+
 function utf8Write(view, offset, str) {
   var c = 0;
   for (var i = 0, l = str.length; i < l; i++) {
@@ -176,13 +179,30 @@ function _encode(bytes, defers, value) {
       return size;
     }
 
-    // fixext 8 / Date
     if (value instanceof Date) {
-      var time = value.getTime();
-      hi = Math.floor(time / Math.pow(2, 32));
-      lo = time >>> 0;
-      bytes.push(0xd7, 0, hi >> 24, hi >> 16, hi >> 8, hi, lo >> 24, lo >> 16, lo >> 8, lo);
-      return 10;
+      var ms = value.getTime();
+      var s = Math.floor(ms / 1e3);
+      var ns = (ms - s * 1e3) * 1e6;
+
+      if (s >= 0 && ns >= 0 && s <= TIMESTAMP64_MAX_SEC) {
+        if (ns === 0 && s <= TIMESTAMP32_MAX_SEC) {
+          // timestamp 32
+          bytes.push(0xd6, 0xff, s >> 24, s >> 16, s >> 8, s);
+          return 6;
+        } else {
+          // timestamp 64
+          hi = s / 0x100000000;
+          lo = s & 0xffffffff;
+          bytes.push(0xd7, 0xff, ns >> 22, ns >> 14, ns >> 6, hi, lo >> 24, lo >> 16, lo >> 8, lo);
+          return 10;
+        }
+      } else {
+        // timestamp 96
+        hi = Math.floor(s / 0x100000000);
+        lo = s >>> 0;
+        bytes.push(0xc7, 0x0c, 0xff, ns >> 24, ns >> 16, ns >> 8, ns, hi >> 24, hi >> 16, hi >> 8, hi, lo >> 24, lo >> 16, lo >> 8, lo);
+        return 15;
+      }
     }
 
     if (value instanceof ArrayBuffer) {

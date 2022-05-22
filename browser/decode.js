@@ -139,6 +139,14 @@ Decoder.prototype._parse = function () {
       length = this._view.getUint8(this._offset);
       type = this._view.getInt8(this._offset + 1);
       this._offset += 2;
+      if (type === -1) {
+        // timestamp 96
+        var ns = this._view.getUint32(this._offset);
+        hi = this._view.getInt32(this._offset + 4);
+        lo = this._view.getUint32(this._offset + 8);
+        this._offset += 12;
+        return new Date((hi * 0x100000000 + lo) * 1e3 + ns / 1e6);
+      }
       return [type, this._bin(length)];
     case 0xc8:
       length = this._view.getUint16(this._offset);
@@ -211,15 +219,30 @@ Decoder.prototype._parse = function () {
     case 0xd6:
       type = this._view.getInt8(this._offset);
       this._offset += 1;
+      if (type === -1) {
+        // timestamp 32
+        value = this._view.getUint32(this._offset);
+        this._offset += 4;
+        return new Date(value * 1e3);
+      }
       return [type, this._bin(4)];
     case 0xd7:
       type = this._view.getInt8(this._offset);
       this._offset += 1;
       if (type === 0x00) {
+        // custom date encoding (kept for backward-compatibility)
         hi = this._view.getInt32(this._offset) * Math.pow(2, 32);
         lo = this._view.getUint32(this._offset + 4);
         this._offset += 8;
         return new Date(hi + lo);
+      }
+      if (type === -1) {
+        // timestamp 64
+        hi = this._view.getUint32(this._offset);
+        lo = this._view.getUint32(this._offset + 4);
+        this._offset += 8;
+        var s = (hi & 0x3) * 0x100000000 + lo;
+        return new Date(s * 1e3 + (hi >>> 2) / 1e6);
       }
       return [type, this._bin(8)];
     case 0xd8:

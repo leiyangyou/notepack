@@ -6,9 +6,8 @@ A fast [Node.js](http://nodejs.org) implementation of the latest [MessagePack](h
 
 ## Notes
 
-* This implementation is not backwards compatible with those that use the older spec. It is recommended that this library is only used in isolated systems.
 * `undefined` is encoded as `nil`
-* `Date` objects are encoded as `fixext 8 [0, ms]`, e.g. `new Date('2000-06-13T00:00:00.000Z')` => `<Buffer d7 00 00 00 00 df b7 62 9c 00>`
+* `Date` objects are encoded following the [Timestamp extension](https://github.com/msgpack/msgpack/blob/master/spec.md#timestamp-extension-type), e.g. `new Date('2000-06-13T00:00:00.000Z')` => `<Buffer d6 ff 39 45 79 80>`
 * `ArrayBuffer` are encoded as `ext 8/16/32 [0, data]`, e.g. `Uint8Array.of(1, 2, 3, 4)` => `<Buffer c7 04 00 01 02 03 04>`
 
 ## Install

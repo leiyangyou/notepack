@@ -22,6 +22,24 @@ function map(length) {
   return result;
 }
 
+function checkDecode(value, hex) {
+  const decodedValue = notepack.decode(Buffer.from(hex, 'hex'));
+  expect(decodedValue).to.deep.equal(value, 'decode failed');
+}
+
+function checkEncode(value, hex) {
+  const encodedHex = Buffer.from(notepack.encode(value)).toString('hex');
+  expect(encodedHex).to.equal(hex, 'encode failed');
+}
+
+function check(value, hex) {
+  checkEncode(value, hex);
+  checkDecode(value, hex);
+
+  // And full circle for fun
+  expect(notepack.decode(notepack.encode(value))).to.deep.equal(value);
+}
+
 describe('notepack (browser build)', function() {
   it('ArrayBuffer view', function() {
     expect(notepack.decode(Uint8Array.from([ 0x93, 1, 2, 3 ]))).to.deep.equal([ 1, 2, 3 ]);
@@ -60,6 +78,15 @@ describe('notepack (browser build)', function() {
     expect(notepack.decode(notepack.encode('\u13DA'))).to.equal('\u13DA');
     // 4-byte
     expect(notepack.decode(notepack.encode('🌐'))).to.equal('🌐');
+  });
+
+  it('timestamp ext', function () {
+    check(new Date(0), 'd6ff00000000');
+    check(new Date('1956-06-17T00:00:00.000Z'), 'c70cff00000000ffffffffe6876500');
+    check(new Date('1970-01-01T00:00:00.000Z'), 'd6ff00000000');
+    check(new Date('2000-06-13T00:00:00.000Z'), 'd6ff39457980');
+    check(new Date('2005-12-31T23:59:59.999Z'), 'd7ffee2e1f0043b71b7f');
+    check(new Date('2140-01-01T13:14:15.678Z'), 'd7ffa1a5d6013fc2faa7');
   });
 
   it('all formats', function () {
