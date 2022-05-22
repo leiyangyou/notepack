@@ -211,6 +211,11 @@ Decoder.prototype._parse = function () {
     case 0xd4:
       type = this._view.getInt8(this._offset);
       this._offset += 1;
+      if (type === 0x00) {
+        // custom encoding for 'undefined' (kept for backward-compatibility)
+        this._offset += 1;
+        return void 0;
+      }
       return [type, this._bin(1)];
     case 0xd5:
       type = this._view.getInt8(this._offset);
