@@ -1,3 +1,9 @@
+## [3.0.1](https://github.com/darrachequesne/notepack/compare/3.0.0...3.0.1) (2022-05-22)
+
+The browser bundle was not updated in the previous release.
+
+
+
 # [3.0.0](https://github.com/darrachequesne/notepack/compare/2.3.0...3.0.0) (2022-05-22)
 
 

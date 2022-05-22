@@ -1,6 +1,6 @@
 {
   "name": "notepack.io",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "A fast Node.js implementation of the latest MessagePack spec",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
