@@ -86,33 +86,33 @@ describe('notepack', function () {
     check(Buffer.allocUnsafe(0), 'c4' + '00');
     check(Buffer.from([0]), 'c4' + '01' + '00');
     check(Buffer.from('hello'), 'c4' + '05' + '68656c6c6f');
+    checkEncode(Uint8Array.of(1, 2, 3, 4), 'c4' + '04' + '01020304');
   });
 
   it('bin 16', function () {
     check(Buffer.from('a'.repeat(256)), 'c5' + '0100' + '61'.repeat(256));
+    const array = new Uint8Array(256);
+    array.fill(8);
+    checkEncode(array.buffer, 'c5' + '0100' + '08'.repeat(256));
   });
 
   it('bin 32', function () {
     check(Buffer.from('a'.repeat(65536)), 'c6' + '00010000' + '61'.repeat(65536));
+    const array = new Uint8Array(65536);
+    array.fill(9);
+    checkEncode(array.buffer, 'c6' + '00010000' + '09'.repeat(65536));
   });
 
   it('ext 8', function () {
     checkDecode([127, Buffer.from('hello')], 'c7' + '05' + '7f' + '68656c6c6f');
-    check(Uint8Array.of(1, 2, 3, 4).buffer, 'c7' + '04' + '00' + '01020304');
   });
 
   it('ext 16', function () {
     checkDecode([1, Buffer.from('a'.repeat(256))], 'c8' + '0100' + '01' + '61'.repeat(256));
-    const array = new Uint8Array(256);
-    array.fill(8);
-    check(array.buffer, 'c8' + '0100' + '00' + '08'.repeat(256));
   });
 
   it('ext 32', function () {
     checkDecode([-128, Buffer.from('a'.repeat(65536))], 'c9' + '00010000' + '80' + '61'.repeat(65536));
-    const array = new Uint8Array(65536);
-    array.fill(9);
-    check(array.buffer, 'c9' + '00010000' + '00' + '09'.repeat(65536));
   });
 
   // float 32
