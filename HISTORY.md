@@ -1,3 +1,84 @@
+# [3.0.0](https://github.com/darrachequesne/notepack/compare/2.3.0...3.0.0) (2022-05-22)
+
+
+### Features
+
+* add support for BigInt.prototype.toJSON ([#28](https://github.com/darrachequesne/notepack/issues/28)) ([9ec1fcd](https://github.com/darrachequesne/notepack/commit/9ec1fcde640dfb57b69ff5f8b45ffa5439a87700))
+
+This change allows to properly encode [BigInt](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/BigInt) objects:
+
+```js
+// always as string
+BigInt.prototype.toJSON = function () {
+  return String(this);
+};
+// or either as string or number, depending on the value
+BigInt.prototype.toJSON = function () {
+  var isSafeNumber = Number.MIN_SAFE_INTEGER <= this && this <= Number.MAX_SAFE_INTEGER;
+  return isSafeNumber ? Number(this) : String(this);
+};
+```
+
+* encode ArrayBuffer objects as bin ([8209327](https://github.com/darrachequesne/notepack/commit/8209327a69e471625f98aa1092d2f0e74e45da4f))
+
+```js
+import { encode } from "notepack.io";
+
+encode(Uint8Array.of(1, 2, 3, 4));
+
+// before: <Buffer c7 04 00 01 02 03 04>
+// after: <Buffer c4 04 01 02 03 04>
+```
+
+ArrayBuffer objects encoded with previous versions of the library will still be decoded, but as Buffer instead of Uint8Array.
+
+Reference: https://github.com/msgpack/msgpack/blob/master/spec.md#bin-format-family
+
+* encode Date objects following the official timestamp extension ([9fb6275](https://github.com/darrachequesne/notepack/commit/9fb62754e826984d9eccbb72c4e9c067ab5cb227))
+
+```js
+import { encode } from "notepack.io";
+
+encode(new Date("2000-06-13T00:00:00.000Z"));
+
+// before: <Buffer d7 00 00 00 00 df b7 62 9c 00>
+// after: <Buffer d6 ff 39 45 79 80>
+```
+
+Date objects encoded with previous versions of the library will still be properly decoded.
+
+Reference: https://github.com/msgpack/msgpack/blob/master/spec.md#timestamp-extension-type
+
+* match JSON.stringify() behavior ([21c6592](https://github.com/darrachequesne/notepack/commit/21c6592cf357c972387284b96999ba8273f08035))
+
+The library will now match the behavior of the JSON.stringify() method:
+
+- undefined is now encoded as nil (0xc0)
+- undefined values in objects are now ignored
+
+```js
+import { encode, decode } from "notepack.io";
+
+const value = {
+  a: undefined,
+  b: null,
+  c: [undefined, null]
+};
+
+decode(encode(value));
+
+// before:
+// {
+//   a: undefined,
+//   b: null,
+//   c: [undefined, null]
+// }
+// after:
+// {
+//   b: null,
+//   c: [null, null]
+// }
+```
 
 # [2.3.0](https://github.com/darrachequesne/notepack/compare/2.2.0...v2.3.0) (2020-03-15)
 
